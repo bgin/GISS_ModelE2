@@ -1,0 +1,18 @@
+# this is an example of ~/.entrc file. You can copy it to your ~/.entrc
+# and customize it to your platform.
+
+# specify the compiler you are using (needed on Linux and MAC)
+# options: Intel8, Absoft, Lahey, PGI, G95, NAG, XLF
+# un-comment the following line to specify compiler
+# COMPILER=Absoft
+
+# set directory where to set up the runs (if you don't like default
+# "./run_dir" 
+# RUN_DIR=/tmp/rundir
+
+# specify directories with forcings and initial conditions data
+# (currently set to directory structure on athena.giss.nasa.gov)
+DATADIR=/clima1/E004pak
+DATADIR_GCM=/u/cmrun
+
+

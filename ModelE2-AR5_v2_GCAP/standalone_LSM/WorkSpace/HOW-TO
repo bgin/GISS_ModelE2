@@ -1,0 +1,63 @@
+HOW-TO compile Ent for various configurations:
+
+1. Modify the sample rundeck r_ent_fbb.mk.
+   See options in rundeck for OPTS_ENT for photosynthesis module, PFT types, parameter sets.
+
+2. For Ent_standalone run (site drivers), see HOW-TO in src/Ent_standalone/HOW-TO.
+
+3. For a single site at the ecosystem-scale using giss_LSM_standalone 
+   (site meteorological drivers with GISS LSM and the Ent DGTEM)
+   In order to run the model for a single site, you do the following:
+a) Uncomment "#define ECOSYSTEM_SCALE" in drv_gswp_force.f, lsm_standalone.f,
+   and GHY.f
+b) Change directory in .modelErc for site parameters (depends on you settings
+   in the run_name.mk file)
+c) Adjust run_name.mk file to read in correct site parameters
+d) gmake setup RUN=run_name
+e) You need to decide which files you will use for the following
+   variables/parameters (listed in the makefile):
+   SOIL - global, constant in time
+   TOP_INDEX - global, constant in time
+   VEG - global, constant in time
+   CROPS -global, constant in time
+   soil_textures - global, constant in time
+   SOILCARB_global - global, constant in time
+   CD_coef - global, constant in time
+   fluxnet_LAI - for each pft, for every timestep
+   fluxnet_vheight - for each pft, constant in time
+   site_forcings (meteorological drivers -see format in drv_gswp_force.f) -
+      for single cell, for every timestep
+   If a variable/parameter listed above is 'global' and you have site-specific
+   data, then you need to create a global array with you data properly located
+   in teh array.  For CD_coef, you might have site specific data realted to
+   sensor height, displacement height, etc.  You will need to modify these
+   values directly in drv_gswp_force.f.
+
+   Note:  The files fort.951, fort.952, fort.953 are dumps of a GCM run to
+   provide some initial conditions for doing an LSM run.  (Igor says that these
+   were probably June conditions).  In general, LSM runs will require spin-ups,
+   and these files just provide some consistent intial conditions for starting a run.
+
+4. For giss_LSM (global off-line run with GISS ground hydrology)
+In order to run the model offline globally, you must first locate
+meteorological forcings files and specify their location in drv_gswp_force.f.
+Of course, the forcing files needed will depend on the resolution that you
+wish to run you model at.  Forcings files are available at 4x5 and 2x2.5
+resolutions.  Currently, they are available at
+/discover/nobackup/mjpuma/lsm_gswp (for 4x5) and
+/discover/nobackup/mjpuma/lsm_gswp_2x2_5 (for 2x2.5)
+
+a) Change directory in .modelErc for global parameters (depends on you settings
+   in the run_name.mk file)
+b) Adjust run_name.mk file to read in correct global parameters based on
+   resolution of run
+c) Set resolution of run by specifying im and jm in drv_gswp_force.f and
+   lsm_standalone.f (only im = 72 and jm = 46; im = 144 and jm = 90)  
+d) gmake setup RUN=run_name ESMF=YES (for runs on multiple processors)
+e) Change to run directory and adjust run_name file to specify number of
+   processors and number of nodes; np (number of processors) must also be specified) 
+
+
+5. For coupled GCM run, HOW-TO forthcoming (ask Igor).
+
+

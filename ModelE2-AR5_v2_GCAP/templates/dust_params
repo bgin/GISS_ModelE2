@@ -1,0 +1,8 @@
+!--------- dust aerosol parameters----------------
+imDust=0           ! 0: PDF emission scheme, 1: AEROCOM
+adiurn_dust=0      ! 1: daily dust diagnostics at selected grid boxes
+fracClayPDFscheme=0.091387274  ! clay emission parameter from calibration
+fracSiltPDFscheme=0.15582714   ! silt emission parameter from calibration
+                               ! derived from calibration run E4100220ac02AF4
+!to_conc_soildust=1   ! three-dimensional dust output as concentration [kg/m^3]
+!-------------------------------------------------

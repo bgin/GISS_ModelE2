@@ -1,0 +1,22 @@
+
+! ------ nudging files: link names based on jyear-iyear1
+! u47.nc=nudgeF_hold/uwnd.1997.MERRAonGISS.144x89.nc
+! v47.nc=nudgeF_hold/vwnd.1997.MERRAonGISS.144x89.nc
+! u48.nc=nudgeF_hold/uwnd.1998.MERRAonGISS.144x89.nc
+! v48.nc=nudgeF_hold/vwnd.1998.MERRAonGISS.144x89.nc
+! u49.nc=nudgeF_hold/uwnd.1999.MERRAonGISS.144x89.nc
+! v49.nc=nudgeF_hold/vwnd.1999.MERRAonGISS.144x89.nc
+ u50.nc=nudgeF_hold/uwnd.2000.MERRAonGISS.144x89.nc
+ v50.nc=nudgeF_hold/vwnd.2000.MERRAonGISS.144x89.nc
+ u51.nc=nudgeF_hold/uwnd.2001.MERRAonGISS.144x89.nc
+ v51.nc=nudgeF_hold/vwnd.2001.MERRAonGISS.144x89.nc
+ u52.nc=nudgeF_hold/uwnd.2002.MERRAonGISS.144x89.nc
+ v52.nc=nudgeF_hold/vwnd.2002.MERRAonGISS.144x89.nc
+ u53.nc=nudgeF_hold/uwnd.2003.MERRAonGISS.144x89.nc
+ v53.nc=nudgeF_hold/vwnd.2003.MERRAonGISS.144x89.nc
+! u54.nc=nudgeF_hold/uwnd.2004.MERRAonGISS.144x89.nc
+! v54.nc=nudgeF_hold/vwnd.2004.MERRAonGISS.144x89.nc
+! u55.nc=nudgeF_hold/uwnd.2005.MERRAonGISS.144x89.nc
+! v55.nc=nudgeF_hold/vwnd.2005.MERRAonGISS.144x89.nc
+! u56.nc=nudgeF_hold/uwnd.2006.MERRAonGISS.144x89.nc
+! v56.nc=nudgeF_hold/vwnd.2006.MERRAonGISS.144x89.nc

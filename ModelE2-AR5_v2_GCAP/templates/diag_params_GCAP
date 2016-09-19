@@ -1,0 +1,21 @@
+! parameters that affect at most diagn. output:  standard if DTsrc=1800. (sec)
+aer_rad_forc=0   ! if set =1, radiation is called numerous times - slow !!
+cloud_rad_forc=1 ! calls radiation twice; use =0 to save cpu time
+!SUBDD=' '        ! no sub-daily frequency diags
+!NSUBDD=0         ! saving sub-daily diags every NSUBDD-th physics time step (1/2 hr)
+SUBDD='ALBEDO:6 PREACC:6 PRECON:6 TS:6 MOLENGTH:6 USTAR:6 PBL:6'
+SUBDD1='RADSWG:6 SNICE:6 OICE:6 PARDR:6 PARDF:6 SNOW:6 SOIL:6'
+SUBDD2='USS:6 VSS:6 SLP:12i PS:12i lightn:6  lightn_c2g:6'
+SUBDD3='MFLUXU:12 MFLUXV:12 MFLUXW:12 C_UP1:12 C_UP2:12'
+SUBDD4='C_DD1:12 C_DD2:12 C_EU1:12 C_EU2:12 C_ED1:12 C_ED2:12'
+SUBDD5='C_OU1:12 C_OU2:12 C_OD1:12 C_OD2:12 MOISTQ:12'
+SUBDD6='T:12 UA:12 VA:12 UB:12 VB:12 OPTDEPTH:12 Q:12 CLDF:12'
+NSUBDD=1
+WRITE_DAILY_FILES=1
+KCOPY=2          ! saving acc + rsf
+isccp_diags=1    ! use =0 to save cpu time, but you lose some key diagnostics
+nda5d=13         ! use =1 to get more accurate energy cons. diag (increases CPU time)
+nda5s=13         ! use =1 to get more accurate energy cons. diag (increases CPU time)
+ndaa=13
+nda5k=13
+nda4=48          ! to get daily energy history use nda4=24*3600/DTsrc

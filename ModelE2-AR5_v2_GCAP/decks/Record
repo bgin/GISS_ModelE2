@@ -1,0 +1,2 @@
+qflux_test2: use old modules
+qflux_test3: use new modules, jacob node, change lib to lib64 in config

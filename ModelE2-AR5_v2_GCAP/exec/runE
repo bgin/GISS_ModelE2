@@ -1,0 +1,128 @@
+#!/bin/sh
+## simple script to run the model
+
+OPTS=
+QS_OPT=
+
+if [ "$MODELERC"x = x ] ; then MODELERC=$HOME/.modelErc ; fi
+if [ -f $MODELERC ] ; then
+    . $MODELERC
+else
+    echo config file not found : $MODELERC
+    exit 1
+fi
+
+if [ $# -le 0 ] ; then
+    echo "Usage: runE RUNID [-np number_of_cpus] [-cold-restart]"
+    echo "Restart the run RUNID"
+    echo "-cold-restart will re-initialize the model as specified"
+    echo "by ISTART= line in the rundeck"
+    exit 1; fi
+
+## The first argument is RunID
+RUNID=$1; shift
+
+## Extract flags related to runE and pass the rest to "RunID" script
+while [ $# -ge 1 ] ; do
+    OPT=$1 ; shift
+#[eml Add this:
+    if [ $OPT = '-np' ] ; then nump=$1; fi
+#eml] 
+    case $OPT in
+        -s)
+            QS_OPT=_"$1" ; shift
+            ;;
+         *)
+            OPTS="$OPTS $OPT"
+            ;;
+    esac
+done
+
+
+if [ ! -d $CMRUNDIR/$RUNID ] ; then
+    echo "Run directory not found: $CMRUNDIR/$RUNID"
+    exit 1; fi
+
+## check if this run is already running
+if [ -f $CMRUNDIR/$RUNID/lock ] ; then
+    echo "            **********************                "
+    echo "$RUNID seems to be already running in $CMRUNDIR/$RUNID"
+    echo
+    echo "If you think it is an error, then most probably this"
+    echo "task was interrupted in an unusual way. Please check."
+    echo "Then remove the lock file:"
+    echo "$CMRUNDIR/$RUNID/lock"
+    echo "and restart the runE."
+    echo "            **********************                "
+    exit 1
+fi
+
+## check if this run is already finished
+run_status_file=$CMRUNDIR/$RUNID/run_status
+if [ -s $run_status_file ] ; then
+    if [ `head -1 $run_status_file` -eq 13 ] \
+     && [ `find $run_status_file -newer $CMRUNDIR/$RUNID/I` ] ; then
+        echo "            **********************                "
+        echo "$RUNID seems to have already finished"
+        echo "Update (or touch) $CMRUNDIR/$RUNID/I to continue the run or"
+        echo "  final diagnostics"
+        echo "            **********************                "
+        exit 1
+    fi
+fi
+
+## form the "qsub" request here
+run_command=${RUNID}.qsub
+cd "$CMRUNDIR/$RUNID"
+echo "#!/bin/sh" > $run_command
+#[eml
+echo "#SBATCH -n "$nump >> $run_command
+#set the following if you want to restrict the number of nodes used
+echo "#SBATCH -N 1" >> $run_command
+echo "#SBATCH -p general" >> $run_command # change queue as necessary
+echo "#SBATCH --mem 32000" >> $run_command # 32GB of RAM, modify as necessary
+echo "#SBATCH -o hostname.out" >> $run_command
+echo "#SBATCH -e hostname.err" >> $run_command
+echo "#SBATCH -t 0-4" >> $run_command
+echo "#SBATCH --mail-type=END" >> $run_command
+echo "#SBATCH --mail-user=lshen@fas.harvard.edu" >> $run_command
+#eml]
+echo "cd $CMRUNDIR/$RUNID" >> $run_command
+echo "./$RUNID $OPTS" >> $run_command
+#[eml If exit code is 13, then success!
+echo "if [ $? -eq 13 ]; then" >> $run_command
+echo "   exit 0" >> $run_command
+echo "fi" >> $run_command
+#eml]
+
+chmod 755 $run_command
+## also reset "run_status"
+echo "-99" > run_status
+echo "not started yet" >> run_status
+
+eval QSUB_STRING_VALUE=\$QSUB_STRING$QS_OPT
+echo "submitting: " $QSUB_STRING_VALUE " ./$run_command"
+$QSUB_STRING_VALUE ./$run_command
+
+## if the task is submitted as a SLURM batch job quit here
+if [[ "$QSUB_STRING_VALUE" =~ .*sbatch.* ]] ; then
+    echo "Submitted as a batch job."
+    echo "After it finishes, check "
+    echo "  $CMRUNDIR/$RUNID/run_status"
+    echo "for status."
+    exit 0
+fi
+
+rc=`head -1 run_status`
+if [ $rc -ne 13 ] && [ $rc -ne 12 ] ; then
+    echo " Problem encountered while running $RUID";
+    if [ $rc -ne 1 ] ; then
+        error_message=`tail -1 run_status`
+    else 
+        error_message="Unknown reason"
+    fi
+    echo " >>> $error_message <<<"
+    exit 2 ;
+else
+    echo "Run $RUNID completed successfully"
+fi

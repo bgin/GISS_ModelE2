@@ -1,0 +1,15 @@
+! ----------------------------------
+TRACERS_AEROSOLS_Koch_e4            ! BC/OC/sulfate/seasalt
+TRACERS_AEROSOLS_SOA                ! Secondary Organic Aerosols
+TRACER_HETCHEM
+! ----------------------------------
+! When using ISORROPIA Thermodynamics ! Nitrate aerosol
+!TRACER_NO3_ISOR_DRV  |-extend_source  |    
+!TRAMP_isocom2              
+!TRAMP_isofwd2          
+!TRAMP_isorev2
+!isrpia.inc
+! When using EQSAM Thermodynamics
+TRACER_NITRATE_DRV    |-extend_source  |            
+TRAMP_eqsam_v03d                   
+!-----------------------------------

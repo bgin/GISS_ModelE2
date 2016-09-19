@@ -1,0 +1,2 @@
+#include "dust_tracer_144x90_input_files"
+MINFR=mineralFractions_Claquin1999Nickovic2012_wetsiev_Kok_freepar_1p5_60_144x90.nc

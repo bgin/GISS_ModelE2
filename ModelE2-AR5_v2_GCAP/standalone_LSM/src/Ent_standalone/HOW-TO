@@ -1,0 +1,83 @@
+############# HOW-TO: ENT_STANDALONE (NON-GLOBAL) RUN ########
+HOW-TO set up a run in Ent_standalone mode (single column Ent without land surface hydrology).
+First see the HOW-TO in the Workspace/HOW-TO.
+#1 - Specify in your .modelErc the path for ENT_DATADIR for driver files.
+     You can also specify this path in the r_ent_fbb.mk makefile to override .modelErc.
+#2 - Specify in your .modelErc the path for GCMSEARCHPATH.  
+     On athena, this would be /u/cmrun.  
+     You can also specify this path in the r_ent_fbb.mk makefile to override .modelErc.
+#3 - In Workspace/r_ent_fbb.mk rundeck, specify different options (OPTS_Ent)   
+     For single-grid cell runs, you should add values for I0f,I1f,J0f,and J1f to specify single-grid forcings.
+     OPTS_Ent:
+       PS_MODEL=FBB            Default: FBB, for Farquhar/Ball-Berry;  other option is FK for Friend&Kiang.
+       PFT_MODEL=ENT           Default: GISS for Matthews 8 veg types; other for 16 PFTS
+       ENT_STANDALONE_DIAG=YES Default: NO.  Add if you want to output all the fort.995 diagnostics (you probably do).
+       FLUXNET=YES             Default: NO.  Add to compile ent_pfts_FLUXNET.f and FBBpfts_FLUXNET.f for
+				site-based vegetation parameters. 
+       MIXED_CANOPY_OPT=YES    Default: NO.  Add to OPTS_Ent and OPTS_Ent_standalone to read in and generate
+                                mixed-canopy vegetation structure.  Not set up for global scale, yet.
+                                NOTE:  Data structure must be described in a csv file;  for syntax rules, see
+                                Ent/ent_make_struct.f routine ent_struct_readcsv.  LAIMIXED and HEIGHTMIXED files 
+                                must consist of single files each, with cohort values in columns in order of
+                                oldest to youngest patch, tallest to shortest cohort.
+#4   In Workspace/r_ent_fbb.mk, link to off-line driver files.
+             -Specify the names of all your driver files.
+	     -For the soil carbon initialization files, use "#" to comment out the line specifying SOILCARB_global.  
+               MOVE THIS LINE to the section where OPTS_ is specified, because the INPUT_FILES section has trouble 
+               skipping commented out lines.
+             -In the INPUT_FILES section, below the line for soil_textures, insert a line:
+		SOILCARB_site=$(ENT_DATADIR)/SOILCARB_site.csv \
+#5 - In src/Ent_standalone/Makefile, at the bottom of the Makefile, there are
+     optional CPPFLAGS to add:
+     SOILCARB_SITE:  add if you have your own site-based soil carbon values in your own file.
+     FLUXNETINIT:    add if you want to initialize vegetation structure with different values from
+                     the Matthews dataset (in src/Ent/ent_GISSveg.f and src/Ent/Ent_ENTveg.f,
+                     you can alter the alamin and alamax arrays).  These values are for the cases
+                     when you want to simulate prescribed LAI as seasonal sinusoids (original GISS
+                     algorithms), or if you want to make sure the initial carbon reserve pool in your
+                     vegetation is consistent with the LAI measurements that you will be prescribing.
+
+     *The Ent_standalone/Makefile CPPFLAGS for some reason don't get seen, so it looks like these flags
+      will have to be specified in the rundeck and src/Ent/Makefile.
+
+#6 - Specify RUN_PARAMETERS.  Replace the following values as relevant to your run.
+     See Workspace/HOW-TO for additional parameters.
+       RUN_PARAMETERS = \
+       &input_parameters \
+       year = 1998,jday=1, jday2=10, \
+       IM=72, JM=46, I0=40, I1=40, J0=39, J1=39, \
+       force_VEG=false, do_soilinit=true \
+
+#Resolution: (IM,JM only 72x46 currently supported)
+#Size of driver files: (I0f,I1f,J0f,J1f, default 72x46 layers, can also be single column)
+#Grid cell within a 72x46 grid to extract (I0,I1,J0,J1) if doing a single-column run.
+
+############### COMPILE AND RUN ########################
+#To compile:
+gmake clean
+gmake setup RUN=r_ent_fbb [The name of your .mk file without .mk at the end]
+
+#TEMPORARY:To allow for prescribing soil C_org pools from an external file for a single site:
+#gmake setup RUN=[your .mk file prefix]  EXTRA_FFLAGS=-DSOILCARB_SITE
+#Some compilers may need extra flags, e.g. for Absoft:
+# make setup RUN=r_ent_fbb CPPFLAGS="-DMACHINE_MAC -DCOMPILER_ABSOFT -DSOILCARB_SITE"
+#See notes for ent_input.
+#...for 2-layer mode use: 
+#gmake setup RUN=r_ent_fbb EXTRA_FFLAGS=-DNCASA2 
+
+# The file ent_input is now generated automatically according to the .mk file.
+# Default settings are:
+# &input_parameters
+# year = 1998,jday=1, jday2=10,year2=1998,IM=72, JM=46, I0=40, I1=40,J0=39,J1=39
+# force_VEG=false, do_soilinit=true, do_soilresp=true, do_phenology=false
+#, do_patchdynamics=false, do_spinup=false, do_frost_hardiness=true
+# /
+# These values are NOT generated automatically (yet): I0f1,I1f,J0f,J1f 
+
+# A subdirectory is created with the ent_input file and the executable.
+# The subdirectory and executable have the same name as your .mk file (without .mk).
+
+#To run:
+#cd r_ent_fbb (subdirectory generated during compile)
+#./r_ent_fbb  (executable)
+

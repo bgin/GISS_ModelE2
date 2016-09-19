@@ -1,0 +1,8 @@
+! ----------------------------------
+TRACERS_AEROSOLS_Koch_e4            ! BC/OC/sulfate/seasalt
+TOMAS_DRV                           ! TOMAS main program        
+TOMAS_microphysics                  ! TOMAS_microphysics 
+TOMAS_EMIS			    ! TOMAS emission tables
+TOMAS_rad	                    ! TOMAS aerosol radiation
+TOMAS_actv                          ! TOMAS indirect effect 
+! ----------------------------------

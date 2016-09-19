@@ -1,0 +1,7 @@
+! updated aerosols need MADAER=3
+TAero_SUL=SUL_Tcadi2012_Bauer_kg_m2_144x90x40_1850-2100
+TAero_SSA=SSA_Tcadi2012_Bauer_kg_m2_144x90x40
+TAero_NIT=NIT_Bauer2008_kg_m2_72x46x40_1850-2100h
+TAero_OCA=OCA_Tcadi2012_Bauer_kg_m2_144x90x40_1850-2100
+TAero_BCA=BCA_Tcadi2012_Bauer_kg_m2_144x90x40_1850-2100
+TAero_BCB=BCB_Tcadi2012_Bauer_kg_m2_144x90x40_1850-2100
